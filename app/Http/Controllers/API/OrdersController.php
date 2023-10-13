@@ -4,87 +4,106 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Order\Model\Order;
+use App\Modules\Order\Services\OrderService;
 use App\Modules\OrderItem\Model\OrderItem;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
+    private  $orderService;
+
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
+    /**
+     * Получить все заказы с возможностью фильтрации и пагинации.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
-        $query = Order::query();
-
-        // Фильтры
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->has('customer')) {
-            $query->where('customer', 'like', '%' . $request->customer . '%');
-        }
-
-        // Пагинация
-        $perPage = $request->has('per_page') ? $request->per_page : 10;
-        $orders = $query->paginate($perPage);
+         $filters = [
+            'status' => $request->input('status'),
+            'customer' => $request->input('customer'),
+        ];
+        $perPage = $request->input('per_page', 10);
+        $orders = $this->orderService->getAllOrders($filters, $perPage);
 
         return response()->json($orders);
     }
 
+    /**
+     * Создать новый заказ.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
-        $order = new Order();
-        $order->customer = $request->customer;
-        $order->status = 'new';
-        $order->save();
+        $data = [
+            'customer' => $request->input('customer'),
+            'items' => $request->input('items'),
+        ];
+        $order = $this->orderService->createOrder($data);
 
-        foreach ($request->items as $item) {
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $order->id;
-            $orderItem->product_id = $item['product_id'];
-            $orderItem->count = $item['count'];
-            $orderItem->save();
-        }
-
-        return response()->json($order);
+        return response()->json($order, 201);
     }
 
+    /**
+     * Обновить заказ.
+     *
+     * @param Request $request
+     * @param int $id Идентификатор заказа
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
-        $order->customer = $request->customer;
-        $order->save();
-
-        // Удаляем старые позиции и создаем новые
-        OrderItem::where('order_id', $id)->delete();
-        foreach ($request->items as $item) {
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $id;
-            $orderItem->product_id = $item['product_id'];
-            $orderItem->count = $item['count'];
-            $orderItem->save();
-        }
+        $data = [
+            'customer' => $request->input('customer'),
+            'items' => $request->input('items'),
+        ];
+        $order = $this->orderService->updateOrder($id, $data);
 
         return response()->json($order);
     }
+
+    /**
+     * Пометить заказ как выполненный.
+     *
+     * @param int $id Идентификатор заказа
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function complete($id)
     {
-        $order = Order::findOrFail($id);
-        $order->status = 'completed';
-        $order->save();
+        $order = $this->orderService->completeOrder($id);
 
         return response()->json($order);
     }
+
+    /**
+     * Пометить заказ как отмененный.
+     *
+     * @param int $id Идентификатор заказа
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function cancel($id)
     {
-        $order = Order::findOrFail($id);
-        $order->status = 'canceled';
-        $order->save();
+        $order = $this->orderService->cancelOrder($id);
 
         return response()->json($order);
     }
+
+    /**
+     * Возобновить заказ.
+     *
+     * @param int $id Идентификатор заказа
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function resume($id)
     {
-        $order = Order::findOrFail($id);
-        $order->status = 'new';
-        $order->save();
+        $order = $this->orderService->resumeOrder($id);
 
         return response()->json($order);
     }
