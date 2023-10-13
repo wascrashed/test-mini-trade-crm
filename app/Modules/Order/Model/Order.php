@@ -9,7 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
-    protected $fillable = ['customer', 'status'];
+    protected $fillable = [
+        'customer',
+        'completed_at',
+        'status',
+        'updated_at',
+    ];
 
     public function orderItems()
     {

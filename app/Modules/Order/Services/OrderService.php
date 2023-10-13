@@ -93,6 +93,7 @@ class OrderService
     {
         $order = Order::findOrFail($id);
         $order->status = 'completed';
+        $order->completed_at= now();
         $order->save();
 
         return $order;

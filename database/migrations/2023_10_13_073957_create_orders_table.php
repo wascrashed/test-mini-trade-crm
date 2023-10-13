@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('customer');
-            $table->timestamp('created_at');
             $table->timestamp('completed_at')->nullable();
             $table->string('status');
+            $table->timestamps();
+
         });
     }
 
