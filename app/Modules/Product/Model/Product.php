@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Models\Modules\Order\Model;
+namespace App\Modules\Product\Model;
 
-use App\Models\Modules\OrderItem\Model\OrderItem;
+use App\Modules\OrderItem\Model\OrderItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['customer', 'status'];
+    protected $fillable = ['name', 'price', 'stock'];
 
     public function orderItems()
     {
