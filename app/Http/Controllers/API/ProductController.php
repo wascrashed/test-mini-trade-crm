@@ -10,12 +10,10 @@ use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
-    private $productService;
 
-    public function __construct(ProductService $productService)
-    {
-        $this->productService = $productService;
-    }
+
+    public function __construct(private ProductService $productService)
+    { }
 
     /**
      * Get all products.

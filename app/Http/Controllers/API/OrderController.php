@@ -7,18 +7,14 @@ use App\Http\Requests\OrderCreateRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Resources\OrderResource;
 use App\Services\OrderService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    private $orderService;
 
-    public function __construct(OrderService $orderService)
-    {
-        $this->orderService = $orderService;
-    }
+    public function __construct(private OrderService $orderService)
+    { }
 
     /**
      * Получить все заказы с возможностью фильтрации и пагинации.
@@ -46,15 +42,15 @@ class OrderController extends Controller
      */
     public function store(OrderCreateRequest $request): JsonResponse
     {
-      $data =
-      $data = [
-          'customer' => $request->input('customer'),
-          'items' => $request->input('items'),
-      ];
+        $data = [
+            'customer' => $request->input('customer'),
+            'items' => $request->input('items'),
+        ];
         $order = $this->orderService->createOrder($data);
 
         return response()->json(new OrderResource($order), 201);
     }
+
     /**
      * Обновить заказ.
      *
