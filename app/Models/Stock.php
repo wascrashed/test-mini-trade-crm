@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Modules\Stock\Model;
+namespace App\Models;
 
-use App\Modules\Product\Model\Product;
-use App\Modules\Warehouse\Model\Warehouse;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

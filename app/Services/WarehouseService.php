@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Warehouse\Services;
+namespace App\Services;
 
 
-use App\Modules\Warehouse\Model\Warehouse;
+use App\Models\Warehouse;
 
 class WarehouseService
 {

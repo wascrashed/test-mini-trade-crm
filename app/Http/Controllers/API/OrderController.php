@@ -3,108 +3,109 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Order\Model\Order;
-use App\Modules\Order\Services\OrderService;
-use App\Modules\OrderItem\Model\OrderItem;
+use App\Http\Requests\OrderCreateRequest;
+use App\Http\Requests\OrderUpdateRequest;
+use App\Http\Resources\OrderResource;
+use App\Services\OrderService;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class OrdersController extends Controller
+class OrderController extends Controller
 {
-    private  $orderService;
+    private $orderService;
 
     public function __construct(OrderService $orderService)
     {
         $this->orderService = $orderService;
     }
+
     /**
      * Получить все заказы с возможностью фильтрации и пагинации.
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-         $filters = [
+        $filters = [
             'status' => $request->input('status'),
             'customer' => $request->input('customer'),
         ];
         $perPage = $request->input('per_page', 10);
         $orders = $this->orderService->getAllOrders($filters, $perPage);
 
-        return response()->json($orders);
+        return response()->json(OrderResource::collection($orders));
     }
 
     /**
      * Создать новый заказ.
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param OrderCreateRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(OrderCreateRequest $request): JsonResponse
     {
-        $data = [
-            'customer' => $request->input('customer'),
-            'items' => $request->input('items'),
-        ];
+      $data =
+      $data = [
+          'customer' => $request->input('customer'),
+          'items' => $request->input('items'),
+      ];
         $order = $this->orderService->createOrder($data);
 
-        return response()->json($order, 201);
+        return response()->json(new OrderResource($order), 201);
     }
-
     /**
      * Обновить заказ.
      *
-     * @param Request $request
+     * @param OrderUpdateRequest $request
      * @param int $id Идентификатор заказа
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(OrderUpdateRequest $request, $id): JsonResponse
     {
-        $data = [
-            'customer' => $request->input('customer'),
-            'items' => $request->input('items'),
-        ];
+        $data = $request->validated();
         $order = $this->orderService->updateOrder($id, $data);
 
-        return response()->json($order);
+        return response()->json(new OrderResource($order));
     }
 
     /**
      * Пометить заказ как выполненный.
      *
      * @param int $id Идентификатор заказа
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function complete($id)
+    public function complete($id): JsonResponse
     {
         $order = $this->orderService->completeOrder($id);
 
-        return response()->json($order);
+        return response()->json(new OrderResource($order));
     }
 
     /**
      * Пометить заказ как отмененный.
      *
      * @param int $id Идентификатор заказа
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function cancel($id)
+    public function cancel($id): JsonResponse
     {
         $order = $this->orderService->cancelOrder($id);
 
-        return response()->json($order);
+        return response()->json(new OrderResource($order));
     }
 
     /**
      * Возобновить заказ.
      *
      * @param int $id Идентификатор заказа
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function resume($id)
+    public function resume($id): JsonResponse
     {
         $order = $this->orderService->resumeOrder($id);
 
-        return response()->json($order);
+        return response()->json(new OrderResource($order));
     }
 }

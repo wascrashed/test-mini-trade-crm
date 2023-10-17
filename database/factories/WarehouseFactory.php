@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Modules\Warehouse\Model\Warehouse;
+use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

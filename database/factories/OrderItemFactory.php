@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Modules\OrderItem\Model\OrderItem;
+use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,9 +20,9 @@ class OrderItemFactory extends Factory
     public function definition()
     {
         return [
-            'order_id' => $this->faker->numberBetween(1, 20),
-            'product_id' => $this->faker->numberBetween(1, 10),
-            'count' => $this->faker->numberBetween(1, 10),
+            'order_id' => $this->faker->numberBetween(1, 30),
+            'product_id' => $this->faker->numberBetween(1, 30),
+            'count' => $this->faker->numberBetween(1, 100),
         ];
     }
 }

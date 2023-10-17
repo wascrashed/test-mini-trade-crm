@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Order\Services;
+namespace App\Services;
 
-use App\Modules\Order\Model\Order;
-use App\Modules\OrderItem\Model\OrderItem;
+use App\Models\Order;
+use App\Models\OrderItem;
 
 class OrderService
 {
@@ -40,7 +40,7 @@ class OrderService
     {
         $order = new Order();
         $order->customer = $data['customer'];
-        $order->status = 'new';
+        $order->status = 'active';
         $order->save();
 
         $itemsData = [];
@@ -123,7 +123,7 @@ class OrderService
     public function resumeOrder(int $id)
     {
         $order = Order::findOrFail($id);
-        $order->status = 'new';
+        $order->status = 'active';
         $order->save();
 
         return $order;

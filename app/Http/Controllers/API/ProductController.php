@@ -3,25 +3,30 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Product\Model\Product;
-use App\Modules\Product\Services\ProductService;
+use App\Http\Resources\ProductResource;
+use App\Services\ProductService;
+use Illuminate\Http\JsonResponse;
+
 
 class ProductController extends Controller
 {
-    private  $productService;
+    private $productService;
 
     public function __construct(ProductService $productService)
     {
         $this->productService = $productService;
     }
+
     /**
-     * Get all warehouses.
+     * Get all products.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-         $products = $this->productService->getAllProducts();
-        return response()->json($products);
+        $products = $this->productService->getAllProducts();
+        return response()->json(
+            ProductResource::collection($products)
+        );
     }
 }

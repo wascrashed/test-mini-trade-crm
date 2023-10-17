@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\WarehouseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\WarehouseController;
-use App\Http\Controllers\API\OrdersController;
-use App\Http\Controllers\API\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +22,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/warehouses', [WarehouseController::class, 'index']);
 Route::get('/products', [ProductController::class, 'index']);
-Route::get('/orders', [OrdersController::class, 'index']);
-Route::post('/orders', [OrdersController::class, 'store']);
-Route::put('/orders/{id}', [OrdersController::class, 'update']);
-Route::post('/orders/{id}/complete', [OrdersController::class, 'complete']);
-Route::post('/orders/{id}/cancel', [OrdersController::class, 'cancel']);
-Route::post('/orders/{id}/resume', [OrdersController::class, 'resume']);
+
+Route::prefix('orders')->group(function () {
+    Route::get('/', [OrderController::class, 'index']);
+    Route::post('/', [OrderController::class, 'store']);
+    Route::put('/{id}', [OrderController::class, 'update']);
+    Route::post('/{id}/complete', [OrderController::class, 'complete']);
+    Route::post('/{id}/cancel', [OrderController::class, 'cancel']);
+    Route::post('/{id}/resume', [OrderController::class, 'resume']);
+});
