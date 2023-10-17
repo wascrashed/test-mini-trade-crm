@@ -15,7 +15,7 @@ class ProductService
      */
     public function getAllProducts(): Collection
     {
-        $products = Product::with('stocks')->get();
+        $products = Product::with('stocks')->paginate();
         return $products;
     }
 

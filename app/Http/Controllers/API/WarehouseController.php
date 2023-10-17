@@ -11,12 +11,10 @@ use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
-    private $warehouseService;
 
-    public function __construct(WarehouseService $warehouseService)
-    {
-        $this->warehouseService = $warehouseService;
-    }
+
+    public function __construct(private WarehouseService $warehouseService)
+    {  }
 
     /**
      * Get all warehouses.

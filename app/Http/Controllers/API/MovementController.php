@@ -10,12 +10,9 @@ use Illuminate\Http\Request;
 
 class MovementController extends Controller
 {
-    private $movementService;
 
-    public function __construct(MovementService $movementService)
-    {
-        $this->movementService = $movementService;
-    }
+    public function __construct( private MovementService $movementService)
+    { }
 
     public function index(Request $request)
     {
